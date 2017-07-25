@@ -62,6 +62,12 @@ def amazonSearch():
     #Call the search bar to search it
     searchBar.send_keys( productName, Keys.RETURN )
 
+    #Returns a list of all DOM items with their elements
+    results = browser.find_elements_by_css_selector('#atfResults')
+
+    for i in results:
+        print (i.text)
+
 def ebaySearch():
 
     #Set browser var to selected choice
@@ -77,6 +83,14 @@ def ebaySearch():
 
     searchBar.send_keys( productName, Keys.RETURN)
 
+    #Returns a list of all DOM items with their elements
+    results = browser.find_elements_by_css_selector('#ResultSetItems')
+
+    for i in results:
+        print (i.text)
+
+
+
 def craigSearch():
 
     #Set browser var to selected choice
@@ -91,6 +105,13 @@ def craigSearch():
     searchBar = browser.find_element_by_name("query")
 
     searchBar.send_keys( productName, Keys.RETURN )
+
+    #Returns a list of all DOM items with their elements
+    results = browser.find_elements_by_css_selector('#sortable-results > ul')
+
+    for i in results:
+        print (i.text)
+
 
 #A dictionary for avaialble browsers
 browserDict = {
