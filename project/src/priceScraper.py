@@ -48,7 +48,7 @@ while True:
 def amazonSearch():
 
     #Set browser var to selected choice
-    browser = browserDict[browseChoice];
+    browser = browserDict[browseChoice]();
 
     #Set the url
     url = urlDict[urlChoice]
@@ -65,7 +65,7 @@ def amazonSearch():
 def ebaySearch():
 
     #Set browser var to selected choice
-    browser = browserDict[browseChoice];
+    browser = browserDict[browseChoice]();
 
     #Set the url
     url = urlDict[urlChoice]
@@ -73,14 +73,14 @@ def ebaySearch():
     #Navigate to the initial URL
     browser.get(url)
 
-    searchBar = browser.find_element_by_name("gh-ac")
+    searchBar = browser.find_element_by_name("_nkw")
 
     searchBar.send_keys( productName, Keys.RETURN)
 
 def craigSearch():
 
     #Set browser var to selected choice
-    browser = browserDict[browseChoice];
+    browser = browserDict[browseChoice]();
 
     #Set the url
     url = urlDict[urlChoice]
@@ -94,9 +94,9 @@ def craigSearch():
 
 #A dictionary for avaialble browsers
 browserDict = {
-    1:webdriver.Firefox(),
-    #2:webdriver.Chrome(),
-    #3:webdriver.Ie()
+    1:webdriver.Firefox,
+    2:webdriver.Chrome, #Make sure you have Chromedriver installed in your PATH
+    #3:webdriver.Ie
 }
 
 #Dictionary for inital destinations
@@ -123,5 +123,5 @@ def main():
         #start = False
 
 if __name__ == "__main__":
-    
+
     main()
