@@ -2,7 +2,6 @@ import unittest
 import sys
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
-import os
 
 #bool to toggle process
 start = False
@@ -12,26 +11,26 @@ while True:
     try:
         browseChoice = int(raw_input("Choose your browser (1-3). 1 = Firefox, 2 = Chrome, 3 = Internet Explorer \n"))
     except ValueError:
-        print( "Please enter a number as your selection. \n" )
+        print( "Please enter a number as your selection." )
     else:
         #if within range we're done here
-        if 1 <= browseChoice =< 3:
+        if 1 <= browseChoice < 3:
             break
         else:
-            print("Number must be 1, 2, or 3. \n")
+            print("Number must be 1, 2, or 3.")
 
 #Ask the user for which domain to go to
 while True:
     try:
         urlChoice = int(raw_input("Where do you want to scrape? (1-3). 1 = Amazon, 2 = Ebay, 3 = Craigslist (plsno) \n"))
     except ValueError:
-        print( "Please enter a number as your selection. \n" )
+        print( "Please enter a number as your selection." )
     else:
         #if within range we're done here
-        if 1 <= browseChoice =< 3:
+        if 1 <= browseChoice < 3:
             break
         else:
-            print("Number must be 1, 2, or 3. \n")
+            print("Number must be 1, 2, or 3.")
 
 #Ask the user for which product to search
 while True:
@@ -74,7 +73,7 @@ def ebaySearch():
     #Navigate to the initial URL
     browser.get(url)
 
-    searchBar = browser.find_element_by_name("_nkw")
+    searchBar = browser.find_element_by_name("gh-ac")
 
     searchBar.send_keys( productName, Keys.RETURN)
 
@@ -93,28 +92,28 @@ def craigSearch():
 
     searchBar.send_keys( productName, Keys.RETURN )
 
+#A dictionary for avaialble browsers
+browserDict = {
+    1:webdriver.Firefox(),
+    #2:webdriver.Chrome(),
+    #3:webdriver.Ie()
+}
+
+#Dictionary for inital destinations
+urlDict= {
+    1: "https://www.amazon.com",
+    2: "https://www.ebay.com",
+    3: "https://www.craigslist.org"
+}
+
+#Dictionary of the functions based on domain
+funcDict = {
+    1: amazonSearch,
+    2: ebaySearch,
+    3: craigSearch
+}
+
 def main():
-
-    #A dictionary for avaialble browsers
-    browserDict = dict(
-        1:webdriver.Firefox(),
-        2:webdriver.Chrome(), #If you're on Mac OSX brew install works
-        3:webdriver.Ie()
-    )
-
-    #Dictionary for inital destinations
-    urlDict = dict(
-        1: "https://www.amazon.com",
-        2: "https://www.ebay.com",
-        3: "https://www.craigslist.org"
-    )
-
-    #Dictionary of the functions based on domain
-    funcDict = dict(
-        1: amazonSearch,
-        2: ebaySearch,
-        3: craigSearch
-    )
 
     if start:
 
@@ -124,5 +123,5 @@ def main():
         #start = False
 
 if __name__ == "__main__":
-
+    
     main()
