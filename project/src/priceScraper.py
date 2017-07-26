@@ -9,15 +9,15 @@ start = False
 #Ask the user for which browser to launch in
 while True:
     try:
-        browseChoice = int(raw_input("Choose your browser (1-3). 1 = Firefox, 2 = Chrome, 3 = Internet Explorer \n"))
+        browseChoice = int(raw_input("Choose your browser (1-3). 1 = Firefox, 2 = Chrome \n"))
     except ValueError:
         print( "Please enter a number as your selection." )
     else:
         #if within range we're done here
-        if 1 <= browseChoice < 3:
+        if 1 <= browseChoice <= 2:
             break
         else:
-            print("Number must be 1, 2, or 3.")
+            print("Number must be 1 or 3.")
 
 #Ask the user for which domain to go to
 while True:
@@ -83,13 +83,27 @@ def ebaySearch():
 
     searchBar.send_keys( productName, Keys.RETURN)
 
+    browser.implicitly_wait(10) # seconds
+
     #Returns a list of all DOM items with their elements
-    results = browser.find_elements_by_css_selector('#ResultSetItems')
+    results = browser.find_elements_by_css_selector("#ResultSetItems")
+
+    final = []
 
     for i in results:
-        print (i.text)
+        name = i.find_element_by_class_name("lvtitle").text
+        #name = i.find_element_by_xpath(".//*[@id='item1ecba5b8e5']/h3")
 
+        price = i.find_element_by_css_selector("li.lvprice.prc").text
+        #price = i.find_element_by_xpath("//*[@id='item1ecba5b8e5']/ul[1]/li[1]")
 
+        #Append a mini dic
+        final.append( {
+            'product' : name,
+            'price' : price,
+        })
+
+    print(final)
 
 def craigSearch():
 
