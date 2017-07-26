@@ -62,11 +62,23 @@ def amazonSearch():
     #Call the search bar to search it
     searchBar.send_keys( productName, Keys.RETURN )
 
+    browser.implicitly_wait(10) # seconds
+
     #Returns a list of all DOM items with their elements
     results = browser.find_elements_by_css_selector('#atfResults')
 
+    final = []
+
     for i in results:
-        print (i.text)
+
+        name = i.find_element_by_css_selector(".scx-truncate-medium.sx-line-clamp-2")
+
+        price = i.find_element_by_css_selector(".sx-price.sx-price-large")
+
+        #Append a mini dic
+        final.append( {'product' : name.text,'price' : price.text})
+
+        print(final)
 
 def ebaySearch():
 
@@ -86,24 +98,23 @@ def ebaySearch():
     browser.implicitly_wait(10) # seconds
 
     #Returns a list of all DOM items with their elements
-    results = browser.find_elements_by_css_selector("#ResultSetItems")
+    results = browser.find_elements_by_id("mainContent")
 
     final = []
 
-    for i in results:
-        name = i.find_element_by_class_name("lvtitle").text
-        #name = i.find_element_by_xpath(".//*[@id='item1ecba5b8e5']/h3")
+    print("results length " + str(len(results)))
 
-        price = i.find_element_by_css_selector("li.lvprice.prc").text
-        #price = i.find_element_by_xpath("//*[@id='item1ecba5b8e5']/ul[1]/li[1]")
+    for i in results:
+        #name = i.find_element_by_class_name("lvtitle").text
+        name = i.find_element_by_xpath(".//*[@class='sresult lvresult clearfix li shic']/h3")
+
+        #price = i.find_element_by_css_selector("li.lvprice.prc").text
+        price = i.find_element_by_xpath(".//*[@class='sresult lvresult clearfix li shic']/ul[1]/li[1]")
 
         #Append a mini dic
-        final.append( {
-            'product' : name,
-            'price' : price,
-        })
+        final.append( {'product' : name.text,'price' : price.text})
 
-    print(final)
+        print(final)
 
 def craigSearch():
 
@@ -120,11 +131,26 @@ def craigSearch():
 
     searchBar.send_keys( productName, Keys.RETURN )
 
+    browser.implicitly_wait(10) # seconds
+
     #Returns a list of all DOM items with their elements
     results = browser.find_elements_by_css_selector('#sortable-results > ul')
 
+    final = []
+
+    print("results length " + str(len(results)))
+
     for i in results:
-        print (i.text)
+        #name = i.find_element_by_class_name("lvtitle").text
+        name = i.find_element_by_css_selector("#sortable-results > ul > li:nth-child(1) > p > a")
+
+        #price = i.find_element_by_css_selector("li.lvprice.prc").text
+        price = i.find_element_by_css_selector("#sortable-results > ul > li:nth-child(1) > p > span.result-meta > span.result-price")
+
+        #Append a mini dic
+        final.append( {'product' : name.text,'price' : price.text})
+
+        print(final)
 
 
 #A dictionary for avaialble browsers
