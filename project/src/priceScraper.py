@@ -62,21 +62,28 @@ def amazonSearch():
     #Call the search bar to search it
     searchBar.send_keys( productName, Keys.RETURN )
 
-    browser.implicitly_wait(10) # seconds
+    browser.implicitly_wait(15) # seconds
 
     #Returns a list of all DOM items with their elements
-    results = browser.find_elements_by_css_selector('#atfResults')
+    results = browser.find_elements_by_css_selector(".s-result-item")
 
     final = []
 
+#    print("results length " + str(len(results)))
+
     for i in results:
 
-        name = i.find_element_by_css_selector(".scx-truncate-medium.sx-line-clamp-2")
+        #print(i.text)
 
-        price = i.find_element_by_css_selector(".sx-price.sx-price-large")
+        name = i.find_element_by_css_selector("h1:last-child, h2:last-child, h3:last-child, h4:last-child")
+        #name = i.find_element_by_xpath(".//*[@class='sresult lvresult clearfix li shic']/h3")
+
+        #price = i.find_element_by_css_selector(".sx-price")
+        #price = i.find_element_by_xpath(".//*[@class='sresult lvresult clearfix li shic']/ul[1]/li[1]")
 
         #Append a mini dic
-        final.append( {'product' : name.text,'price' : price.text})
+        final.append( {'product' : name.text})
+        #final.append( {'product' : name.text,'price' : price.text})
 
         print(final)
 
@@ -95,21 +102,24 @@ def ebaySearch():
 
     searchBar.send_keys( productName, Keys.RETURN)
 
-    browser.implicitly_wait(10) # seconds
+    browser.implicitly_wait(15) # seconds
 
     #Returns a list of all DOM items with their elements
-    results = browser.find_elements_by_id("mainContent")
+    results = browser.find_elements_by_css_selector(".lvresult")
 
     final = []
 
-    print("results length " + str(len(results)))
+#    print("results length " + str(len(results)))
 
     for i in results:
-        #name = i.find_element_by_class_name("lvtitle").text
-        name = i.find_element_by_xpath(".//*[@class='sresult lvresult clearfix li shic']/h3")
 
-        #price = i.find_element_by_css_selector("li.lvprice.prc").text
-        price = i.find_element_by_xpath(".//*[@class='sresult lvresult clearfix li shic']/ul[1]/li[1]")
+        #print(i.text)
+
+        name = i.find_element_by_css_selector("h3.lvtitle")
+        #name = i.find_element_by_xpath(".//*[@class='sresult lvresult clearfix li shic']/h3")
+
+        price = i.find_element_by_css_selector(".lvprice")
+        #price = i.find_element_by_xpath(".//*[@class='sresult lvresult clearfix li shic']/ul[1]/li[1]")
 
         #Append a mini dic
         final.append( {'product' : name.text,'price' : price.text})
