@@ -2,6 +2,10 @@ import unittest
 import sys
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
 
 #bool to toggle process
 start = False
@@ -62,10 +66,13 @@ def amazonSearch():
     #Call the search bar to search it
     searchBar.send_keys( productName, Keys.RETURN )
 
-    browser.implicitly_wait(15) # seconds
+    browser.implicitly_wait(5) # seconds
 
     #Returns a list of all DOM items with their elements
-    results = browser.find_elements_by_css_selector(".s-result-item")
+#    WebDriverWait(browser, 10).until(EC.presence_of_element_located((By.ID, "s-results-list-atf")) )
+
+#    results = browser.find_elements_by_css_selector(".s-result-item")
+    results = browser.find_elements_by_xpath("//*[contains(@id,'result_')]")
 
     final = []
 
@@ -74,18 +81,19 @@ def amazonSearch():
     for i in results:
 
         #print(i.text)
-
-        name = i.find_element_by_css_selector("h1:last-child, h2:last-child, h3:last-child, h4:last-child")
-        #name = i.find_element_by_xpath(".//*[@class='sresult lvresult clearfix li shic']/h3")
+        name = i.find_element_by_xpath('/h2[@class="a-size-medium s-inline  s-access-title  a-text-normal"]')
 
         #price = i.find_element_by_css_selector(".sx-price")
-        #price = i.find_element_by_xpath(".//*[@class='sresult lvresult clearfix li shic']/ul[1]/li[1]")
+        #price = i.find_element_by_xpath(".//SPAN[@class='sx-price-whole']")
 
         #Append a mini dic
         final.append( {'product' : name.text})
+        #final.append( {'price' : price.text} )
         #final.append( {'product' : name.text,'price' : price.text})
 
-        print(final)
+    print(final)
+
+    browser.quit()
 
 def ebaySearch():
 
@@ -126,6 +134,9 @@ def ebaySearch():
 
         print(final)
 
+
+    browser.quit()
+
 def craigSearch():
 
     #Set browser var to selected choice
@@ -144,24 +155,25 @@ def craigSearch():
     browser.implicitly_wait(10) # seconds
 
     #Returns a list of all DOM items with their elements
-    results = browser.find_elements_by_css_selector('#sortable-results > ul')
+    #results = browser.find_elements_by_css_selector(".result-info")
+    results = browser.find_elements_by_css_selector(".result-row")
 
     final = []
 
-    print("results length " + str(len(results)))
+    #print("results length " + str(len(results)))
 
     for i in results:
-        #name = i.find_element_by_class_name("lvtitle").text
-        name = i.find_element_by_css_selector("#sortable-results > ul > li:nth-child(1) > p > a")
+        name = i.find_element_by_xpath(".//*[@class='result-title hdrlnk']")
 
-        #price = i.find_element_by_css_selector("li.lvprice.prc").text
-        price = i.find_element_by_css_selector("#sortable-results > ul > li:nth-child(1) > p > span.result-meta > span.result-price")
+        #price = i.find_element_by_tag_name(('a'))
+        price = i.find_element_by_xpath(".//*[@class='result-meta']/span[1]")
 
         #Append a mini dic
         final.append( {'product' : name.text,'price' : price.text})
 
-        print(final)
+    print(final)
 
+    browser.quit()
 
 #A dictionary for avaialble browsers
 browserDict = {
