@@ -5,7 +5,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-
+import json
 
 #bool to toggle process
 start = False
@@ -66,32 +66,33 @@ def amazonSearch():
     #Call the search bar to search it
     searchBar.send_keys( productName, Keys.RETURN )
 
-    browser.implicitly_wait(5) # seconds
-
     #Returns a list of all DOM items with their elements
-#    WebDriverWait(browser, 10).until(EC.presence_of_element_located((By.ID, "s-results-list-atf")) )
 
-#    results = browser.find_elements_by_css_selector(".s-result-item")
-    results = browser.find_elements_by_xpath("//*[contains(@id,'result_')]")
+    try:
+        element = WebDriverWait(browser, 10).until(
+            EC.presence_of_element_located((By.ID, "atfResults"))
+        )
 
-    final = []
+    finally:
+        names = browser.find_elements_by_class_name("s-access-title")
+        prices = browser.find_elements_by_class_name("sx-price-large")
 
-#    print("results length " + str(len(results)))
+    textName = []
+    textPrice = []
 
-    for i in results:
+    for i in names:
+        name = i.text
+        textName.append( name.encode('utf-8') )
 
-        #print(i.text)
-        name = i.find_element_by_xpath('/h2[@class="a-size-medium s-inline  s-access-title  a-text-normal"]')
+    for j in prices:
+        price = j.text
+        textPrice.append( price.encode('utf-8') )
 
-        #price = i.find_element_by_css_selector(".sx-price")
-        #price = i.find_element_by_xpath(".//SPAN[@class='sx-price-whole']")
-
-        #Append a mini dic
-        final.append( {'product' : name.text})
-        #final.append( {'price' : price.text} )
-        #final.append( {'product' : name.text,'price' : price.text})
+    final = dict(zip(textName,textPrice))
 
     print(final)
+
+    exportJason(final)
 
     browser.quit()
 
@@ -129,10 +130,15 @@ def ebaySearch():
         price = i.find_element_by_css_selector(".lvprice")
         #price = i.find_element_by_xpath(".//*[@class='sresult lvresult clearfix li shic']/ul[1]/li[1]")
 
-        #Append a mini dic
-        final.append( {'product' : name.text,'price' : price.text})
+        finalName = name.text
+        finalPrice = price.text
 
-        print(final)
+        #Append a mini dic
+        final.append( {'product' : finalName.encode('utf-8') ,'price' : finalPrice.encode('utf-8')})
+
+    print(final)
+
+    exportJason(final)
 
 
     browser.quit()
@@ -168,12 +174,22 @@ def craigSearch():
         #price = i.find_element_by_tag_name(('a'))
         price = i.find_element_by_xpath(".//*[@class='result-meta']/span[1]")
 
+        finalName = name.text
+        finalPrice = price.text
+
         #Append a mini dic
-        final.append( {'product' : name.text,'price' : price.text})
+        final.append( {'product' : finalName.encode('utf-8') ,'price' : finalPrice.encode('utf-8')})
 
     print(final)
 
+    exportJason(final)
+
     browser.quit()
+
+#SEE YOU JASON KEK
+def exportJason(results_dict):
+    with open('data.json', 'w') as f:
+        json.dump(results_dict, f, ensure_ascii=False)
 
 #A dictionary for avaialble browsers
 browserDict = {
