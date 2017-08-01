@@ -2,7 +2,6 @@
 
 Javascript code that handles all the chart stuff for the front end
 
-
 */
 
 queue()
@@ -17,4 +16,20 @@ function makeGraphs(error, projectJSON){
 
 	console.log(dbData);
 
+	var timeChart = dc.barChart("#time-chart");
+
+	timeChart
+	    .width(600)
+	    .height(160)
+	    .margins({top: 10, right: 50, bottom: 30, left: 50})
+	    .dimension(dateDim)
+	    .group(numProjectsByDate)
+	    .transitionDuration(500)
+	    .x(d3.time.scale().domain([minDate, maxDate]))
+	    .elasticY(true)
+	    .xAxisLabel("Days")
+	    .yAxis().ticks(4);
+
+
+	dc.renderAll();
 }
