@@ -1,3 +1,5 @@
+#Gets the product from the respective websites
+
 import unittest
 import sys
 from selenium import webdriver
@@ -6,6 +8,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import json
+import datetime
 
 #bool to toggle process
 start = False
@@ -98,6 +101,10 @@ def amazonSearch():
 
 def ebaySearch():
 
+    weekday = str( datetime.datetime.today().weekday())
+
+    date = str(  datetime.datetime.today().strftime('%Y-%m-%d'))
+
     #Set browser var to selected choice
     browser = browserDict[browseChoice]();
 
@@ -131,15 +138,18 @@ def ebaySearch():
         #price = i.find_element_by_xpath(".//*[@class='sresult lvresult clearfix li shic']/ul[1]/li[1]")
 
         finalName = name.text
+        nameName = finalName.encode('utf-8')
         finalPrice = price.text
 
-        #Append a mini dic
-        final.append( {'product' : finalName.encode('utf-8') ,'price' : finalPrice.encode('utf-8')})
-
-    print(final)
+        final.append({
+            nameName : {
+                'day': weekday ,
+                'date' : date ,
+                'price' : finalPrice.encode('utf-8')
+            }
+        })
 
     exportJason(final)
-
 
     browser.quit()
 
@@ -175,12 +185,16 @@ def craigSearch():
         price = i.find_element_by_xpath(".//*[@class='result-meta']/span[1]")
 
         finalName = name.text
+
         finalPrice = price.text
 
-        #Append a mini dic
-        final.append( {'product' : finalName.encode('utf-8') ,'price' : finalPrice.encode('utf-8')})
-
-    print(final)
+        final.append({
+            finalName.encode('utf-8') : {
+                'day': weekday ,
+                'date' : date ,
+                'price' : finalPrice.encode('utf-8')
+            }
+        })
 
     exportJason(final)
 
@@ -188,7 +202,7 @@ def craigSearch():
 
 #SEE YOU JASON KEK
 def exportJason(results_dict):
-    with open('data.json', 'w') as f:
+    with open('json/data.json', 'w') as f:
         json.dump(results_dict, f, ensure_ascii=False)
 
 #A dictionary for avaialble browsers
