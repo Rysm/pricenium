@@ -1,11 +1,25 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Layouts &raquo; Hero-Thirds</title>
+  <title>Pricenium</title>
+</head>
+
+<body class="application">
+
   <link rel="stylesheet" href="./static/lib/css/bootstrap.min.css">
   <link rel="stylesheet" href="./static/lib/css/keen-dashboards.css">
-</head>
-<body class="application">
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/dc/1.7.5/dc.css"/>
+  <script src="../static/lib/js/jquery.min.js"></script>
+  <script src="../static/lib/js/bootstrap.min.js"></script>
+  <script src="../static/lib/js/crossfilter.js"></script>
+
+  <script src="../static/lib/js/d3.js"></script>
+  <!--<script src="../static/lib/js/dc.js"></script>-->
+  <script src="../static/lib/js/queue.js"></script>
+
+
+  <script src="./static/lib/js/keen.min.js"></script>
+  <script src='../static/js/visual.js' type='text/javascript'></script>
 
   <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
     <div class="container-fluid">
@@ -15,25 +29,27 @@
     </div>
   </div>
 
-  <div class="container-fluid">
-
-    <div class="row">
-
-          <!-- Time Chart -->
-          <div class="col-sm-12">
-            <div class="chart-wrapper">
-              <div class="chart-title">
-                Prices of Products Over Time
-              </div>
-              <div class="chart-stage">
-                <div id="time-chart"></div>
-              </div>
+   <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="row">
+                      <!-- Time Chart -->
+                      <div class="col-sm-12">
+                        <div class="chart-wrapper">
+                          <div class="chart-title">
+                            Prices Over the Past Week
+                          </div>
+                          <div class="chart-stage">
+                            <svg id="#price-chart" width="700" height="500"></svg>
+                          </div>
+                        </div>
+                      </div>
+                      <!-- Time Chart -->
+                    </div>
+                </div>
             </div>
-          </div>
-          <!-- Time Chart -->
+        </div>
     </div>
-
-  </div>
 
     <hr>
     <p class="small text-muted">Built with &#9829; by <a href="https://keen.io">Keen IO</a></p>
