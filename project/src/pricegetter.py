@@ -123,7 +123,9 @@ def ebaySearch():
     #Returns a list of all DOM items with their elements
     results = browser.find_elements_by_css_selector(".lvresult")
 
-    final = []
+    final = {}
+
+    tracking = []
 
 #    print("results length " + str(len(results)))
 
@@ -137,19 +139,23 @@ def ebaySearch():
         price = i.find_element_by_css_selector(".lvprice")
         #price = i.find_element_by_xpath(".//*[@class='sresult lvresult clearfix li shic']/ul[1]/li[1]")
 
+        item = {}
+
         finalName = name.text
         nameName = finalName.encode('utf-8')
         finalPrice = price.text
 
-        final.append({
-            nameName : {
+        final[nameName] = {
                 'day': weekday ,
                 'date' : date ,
                 'price' : finalPrice.encode('utf-8')
-            }
-        })
+        }
 
-    exportJason(final)
+        tracking.append(finalName.encode('utf-8'))
+
+    exportJ1(final) #exports dict of item names as keys and other data as values
+
+    exportJ2( dict.fromkeys(tracking) ) #exports the name of stuff for key matching later on
 
     browser.quit()
 
@@ -174,7 +180,9 @@ def craigSearch():
     #results = browser.find_elements_by_css_selector(".result-info")
     results = browser.find_elements_by_css_selector(".result-row")
 
-    final = []
+    final = {}
+
+    tracking= []
 
     #print("results length " + str(len(results)))
 
@@ -188,22 +196,29 @@ def craigSearch():
 
         finalPrice = price.text
 
-        final.append({
-            finalName.encode('utf-8') : {
+        final[nameName] = {
                 'day': weekday ,
                 'date' : date ,
                 'price' : finalPrice.encode('utf-8')
-            }
-        })
+        }
 
-    exportJason(final)
+        tracking.append(finalName.encode('utf-8'))
+
+    exportJ1(final) #exports dict of item names as keys and other data as values
+
+    exportJ2( dict.fromkeys(tracking) ) #exports the name of stuff for key matching later on
 
     browser.quit()
 
 #SEE YOU JASON KEK
-def exportJason(results_dict):
+def exportJ1(results_dict):
     with open('json/data.json', 'w') as f:
         json.dump(results_dict, f, ensure_ascii=False)
+
+#SEE YOU JASON KEK
+def exportJ2(item_names):
+    with open('json/names.json', 'w') as f:
+        json.dump(item_names, f, ensure_ascii=False)
 
 #A dictionary for avaialble browsers
 browserDict = {

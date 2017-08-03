@@ -7,14 +7,28 @@ client = MongoClient( "localhost", 27017)
 
 db = client["pricenium"]
 
-posts = db.posts
+posts = db.posts #contains the dictionary of item names as keys and date/price as values
+
+names = db.names #contains list of items that can match the keys
 
 #read the data json from pricescraper
-selData = open("data.json", "r")
+selData1 = open("json/data.json", "r")
 
 #Parse the data
-parseData = json.loads( selData.read() )
+parseData1 = json.loads( selData1.read() )
 
 posts.remove()
 
-posts.insert(parseData,check_keys=False)
+posts.insert(parseData1,check_keys=False)
+
+####### KEK #######
+
+#read the data json from pricescraper
+selData2 = open("json/names.json", "r")
+
+#Parse the data
+parseData2 = json.loads( selData2.read() )
+
+names.remove()
+
+names.insert(parseData2,check_keys=False)
