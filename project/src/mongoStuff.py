@@ -17,8 +17,6 @@ selData1 = open("json/data.json", "r")
 #Parse the data
 parseData1 = json.loads( selData1.read() )
 
-posts.remove()
-
 posts.insert(parseData1,check_keys=False)
 
 ####### KEK #######
@@ -28,7 +26,5 @@ selData2 = open("json/names.json", "r")
 
 #Parse the data
 parseData2 = json.loads( selData2.read() )
-
-names.remove()
 
 names.insert(parseData2,check_keys=False)

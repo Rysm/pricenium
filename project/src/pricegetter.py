@@ -8,7 +8,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import json
-import datetime
+from datetime import datetime
 
 #bool to toggle process
 start = False
@@ -53,6 +53,12 @@ while True:
             print("Please enter the name of the product you want to search up")
 
 def amazonSearch():
+
+    weekday = str( datetime.today().weekday())
+
+    date = str(  datetime.today().strftime('%Y-%m-%d'))
+
+    time = str( datetime.now().time() )
 
     #Set browser var to selected choice
     browser = browserDict[browseChoice]();
@@ -101,9 +107,11 @@ def amazonSearch():
 
 def ebaySearch():
 
-    weekday = str( datetime.datetime.today().weekday())
+    weekday = str( datetime.today().weekday())
 
-    date = str(  datetime.datetime.today().strftime('%Y-%m-%d'))
+    date = str(  datetime.today().strftime('%Y-%m-%d'))
+
+    time = str( datetime.now().time() )
 
     #Set browser var to selected choice
     browser = browserDict[browseChoice]();
@@ -123,7 +131,7 @@ def ebaySearch():
     #Returns a list of all DOM items with their elements
     results = browser.find_elements_by_css_selector(".lvresult")
 
-    final = {}
+    final = []
 
     tracking = []
 
@@ -145,21 +153,32 @@ def ebaySearch():
         nameName = finalName.encode('utf-8')
         finalPrice = price.text
 
-        final[nameName] = {
-                'day': weekday ,
-                'date' : date ,
-                'price' : finalPrice.encode('utf-8')
+        final.append({
+                nameName :{
+                    'price' : finalPrice.encode('utf-8')
+                }
+        })
+
+        result = {
+            'timestamp' :  datetime.utcnow().strftime('%B %d %Y - %H:%M:%S'),
+            'items': final
         }
 
         tracking.append(finalName.encode('utf-8'))
 
-    exportJ1(final) #exports dict of item names as keys and other data as values
+    exportJ1(result) #exports dict of item names as keys and other data as values
 
     exportJ2( dict.fromkeys(tracking) ) #exports the name of stuff for key matching later on
 
     browser.quit()
 
 def craigSearch():
+
+    weekday = str( datetime.today().weekday())
+
+    date = str(  datetime.today().strftime('%Y-%m-%d'))
+
+    time = str( datetime.now().time() )
 
     #Set browser var to selected choice
     browser = browserDict[browseChoice]();
@@ -193,18 +212,23 @@ def craigSearch():
         price = i.find_element_by_xpath(".//*[@class='result-meta']/span[1]")
 
         finalName = name.text
-
+        nameName = finalName.encode('utf-8')
         finalPrice = price.text
 
-        final[nameName] = {
-                'day': weekday ,
-                'date' : date ,
-                'price' : finalPrice.encode('utf-8')
+        final.append({
+                nameName :{
+                    'price' : finalPrice.encode('utf-8')
+                }
+        })
+
+        result = {
+            'timestamp' : datetime.utcnow().strftime('%B %d %Y - %H:%M:%S'),
+            'items': final
         }
 
         tracking.append(finalName.encode('utf-8'))
 
-    exportJ1(final) #exports dict of item names as keys and other data as values
+    exportJ1(result) #exports dict of item names as keys and other data as values
 
     exportJ2( dict.fromkeys(tracking) ) #exports the name of stuff for key matching later on
 
@@ -213,12 +237,12 @@ def craigSearch():
 #SEE YOU JASON KEK
 def exportJ1(results_dict):
     with open('json/data.json', 'w') as f:
-        json.dump(results_dict, f, ensure_ascii=False)
+        json.dump(results_dict, f, ensure_ascii=False, indent=2)
 
-#SEE YOU JASON KEK
+#SEE YOU JASON KEK2
 def exportJ2(item_names):
     with open('json/names.json', 'w') as f:
-        json.dump(item_names, f, ensure_ascii=False)
+        json.dump(item_names, f, ensure_ascii=False, indent=2)
 
 #A dictionary for avaialble browsers
 browserDict = {
