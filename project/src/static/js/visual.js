@@ -78,6 +78,30 @@ window.onload = function(){
             }
         ];
 
+        var lineData2 = [{
+            'x': 0,
+            'y': price*2
+            }, {
+            'x': 1,
+            'y': price/3
+            }, {
+            'x': 2,
+            'y': price-10
+            }, {
+            'x': 3,
+            'y': price
+            }, {
+            'x': 4,
+            'y': price*1.3
+            }, {
+            'x': 5,
+            'y': price/4
+            }, {
+            'x': 6,
+            'y': price/5
+            }
+        ];
+
         var vis = d3.select("#price-chart"),
         WIDTH = 500,
         HEIGHT = 500,
@@ -144,6 +168,12 @@ window.onload = function(){
         vis.append("svg:path")
             .attr("d", lineFunc(lineData))
             .attr("stroke", "blue")
+            .attr("stroke-width", 2)
+            .attr("fill", "none");
+
+        vis.append("svg:path")
+            .attr("d", lineFunc(lineData2))
+            .attr("stroke", "red")
             .attr("stroke-width", 2)
             .attr("fill", "none");
 
