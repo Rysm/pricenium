@@ -10,6 +10,7 @@ from selenium.webdriver.support import expected_conditions as EC
 import json
 from datetime import datetime
 
+
 #bool to toggle process
 start = False
 
@@ -105,6 +106,7 @@ def amazonSearch():
 
     browser.quit()
 
+#EBAY CODE HERE
 def ebaySearch():
 
     weekday = str( datetime.today().weekday())
@@ -135,6 +137,10 @@ def ebaySearch():
 
     tracking = []
 
+    stamps = []
+
+    result = {}
+
 #    print("results length " + str(len(results)))
 
     for i in results:
@@ -151,27 +157,35 @@ def ebaySearch():
 
         finalName = name.text
         nameName = finalName.encode('utf-8')
+
+        tracking.append(nameName)
+
         finalPrice = price.text
 
         final.append({
                 nameName :{
-                    'price' : finalPrice.encode('utf-8')
+                    'price' : finalPrice.encode('utf-8'),
+                    'timestamp' : datetime.utcnow().strftime('%H:%M:%S'),
                 }
         })
 
         result = {
-            'timestamp' :  datetime.utcnow().strftime('%B %d %Y - %H:%M:%S'),
-            'items': final
+            datetime.utcnow().strftime('%B %d %Y') : final
         }
 
-        tracking.append(finalName.encode('utf-8'))
+
+
+    stamps.append(datetime.utcnow().strftime('%B %d %Y'))
 
     exportJ1(result) #exports dict of item names as keys and other data as values
 
     exportJ2( dict.fromkeys(tracking) ) #exports the name of stuff for key matching later on
 
+    exportJ3( dict.fromkeys(stamps) )
+
     browser.quit()
 
+#CRAIGLIST CODE HERE
 def craigSearch():
 
     weekday = str( datetime.today().weekday())
@@ -203,6 +217,10 @@ def craigSearch():
 
     tracking= []
 
+    stamps = []
+
+    result = {}
+
     #print("results length " + str(len(results)))
 
     for i in results:
@@ -215,34 +233,45 @@ def craigSearch():
         nameName = finalName.encode('utf-8')
         finalPrice = price.text
 
+        tracking.append(nameName)
+
         final.append({
                 nameName :{
-                    'price' : finalPrice.encode('utf-8')
+                    'price' : finalPrice.encode('utf-8'),
+                    'timestamp' : datetime.utcnow().strftime('%H:%M:%S'),
                 }
         })
 
         result = {
-            'timestamp' : datetime.utcnow().strftime('%B %d %Y - %H:%M:%S'),
-            'items': final
+            datetime.utcnow().strftime('%B %d %Y') : final
         }
-
-        tracking.append(finalName.encode('utf-8'))
+    stamps.append(datetime.utcnow().strftime('%B %d %Y'))
 
     exportJ1(result) #exports dict of item names as keys and other data as values
 
     exportJ2( dict.fromkeys(tracking) ) #exports the name of stuff for key matching later on
 
+    exportJ3( dict.fromkeys(stamps) )
+
     browser.quit()
 
 #SEE YOU JASON KEK
 def exportJ1(results_dict):
-    with open('json/data.json', 'w') as f:
+    with open('json/data.json', 'a') as f:
         json.dump(results_dict, f, ensure_ascii=False, indent=2)
+        f.write("\n")
 
 #SEE YOU JASON KEK2
 def exportJ2(item_names):
-    with open('json/names.json', 'w') as f:
+    with open('json/names.json', 'a') as f:
         json.dump(item_names, f, ensure_ascii=False, indent=2)
+        f.write("\n")
+
+#SEE YOU JASON KEK2
+def exportJ3(time_stamps):
+    with open('json/stamps.json', 'a') as f:
+        json.dump(time_stamps, f, ensure_ascii=False, indent=2)
+        f.write("\n")
 
 #A dictionary for avaialble browsers
 browserDict = {

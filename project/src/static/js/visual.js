@@ -1,17 +1,31 @@
 /*
 
-Javascript code that handles all the chart stuff for the front end
+Javascript code that handles all the line chart stuff front end
 
 */
 
 window.onload = function(){
 
+
     //alert("Page loaded.")
 
+    var weekday = new Date().getDay();
 
     InitChart();
 
     function InitChart() {
+
+        //THANKS STACK OVERFLOW
+        Array.prototype.remove = function() {
+            var what, a = arguments, L = a.length, ax;
+            while (L && this.length) {
+                what = a[--L];
+                while ((ax = this.indexOf(what)) !== -1) {
+                    this.splice(ax, 1);
+                }
+            }
+            return this;
+        };
 
         //Read in the JSON data from the MongoDB
         var itemDict, itemKeys;
@@ -34,71 +48,118 @@ window.onload = function(){
           }
         });
 
+        $.ajax({
+          url: 'http://localhost:5000/pricenium/stamps',
+          async: false,
+          dataType: 'json',
+          success: function (json) {
+            timeStamps = json;
+          }
+        });
+
+        //console.log(itemDict);
+        //console.log(itemKeys);
+        //console.log(timeStamps);
+
         //Get the keys into an array of strings
-        var keys = [];
+        var keyz = [];
+
         for (var key in itemKeys[0]) {
           if (itemKeys[0].hasOwnProperty(key)) {
-            keys.push(key);
+            keyz.push(key);
           }
         }
 
-        //console.log(keys);
-        var values = [];
+        //remove the bad key
+        keyz.remove('_id')
 
-        for (q = 0; q < keys.length; q++){
-            values.push(itemDict[0][keys[q]]);
+        //Get the dates we've recorded on
+        var times =[];
+
+        for (var date in timeStamps[0]){
+            if (timeStamps[0].hasOwnProperty(date)){
+                times.push(date);
+            }
         }
 
-        console.log(values[0]['price']);
+//        console.log(keys.length);
 
-        var number = values[0]['price'];
-        var price = Number(number.replace(/[^0-9\.]+/g,""));
+
+//        console.log(times);
+//        console.log(getDayOfWeek(times[1]));
+
+        //Retrieve the price based on date
+        var values = [];
+
+        var priceData = [];
+
+        var myDate = times[1];
+
+        var innerArray = itemDict[0][myDate];
+
+        //console.log(innerArray);
+
+        //Iterate through all the available keys we have and then
+        for (p = 0 ; p<keyz.length; p++){
+            for(var i in innerArray[p]){
+                //console.log(i); // alerts key
+                priceData.push(innerArray[p][i]['price'].substring(0,6) ); //alerts key's value
+            }
+        }
+
+
+        //console.log(values[0]['price']);
+
+        //var number = values[0]['price'];
+        //var price = Number(number.replace(/[^0-9\.]+/g,""));
+
+        console.log(priceData);
 
         var lineData = [{
             'x': 0,
-            'y': price
+            'y': 10
             }, {
             'x': 1,
-            'y': price
+            'y': 20
             }, {
             'x': 2,
-            'y': price
+            'y': 40
             }, {
             'x': 3,
-            'y': price
+            'y': 20
             }, {
             'x': 4,
-            'y': price
+            'y': 32
             }, {
             'x': 5,
-            'y': price
+            'y': 90
             }, {
             'x': 6,
-            'y': price
+            'y': 65
             }
         ];
 
         var lineData2 = [{
             'x': 0,
-            'y': price*2
+            'y': 23
             }, {
             'x': 1,
-            'y': price/3
+            'y': 76
             }, {
             'x': 2,
-            'y': price-10
+            'y': 43
             }, {
             'x': 3,
-            'y': price
+            'y': 10
             }, {
             'x': 4,
-            'y': price*1.3
+            'y': 5
             }, {
             'x': 5,
-            'y': price/4
+            'y': 29
             }, {
             'x': 6,
-            'y': price/5
+            'y': 30
             }
         ];
 
@@ -177,5 +238,12 @@ window.onload = function(){
             .attr("stroke-width", 2)
             .attr("fill", "none");
 
+}
+
+
+    // Script from StackOverflow that gets the days returned
+    function getDayOfWeek(date) {
+        var dayOfWeek = new Date(date).getDay();
+        return isNaN(dayOfWeek) ? null : ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][dayOfWeek];
     }
 }

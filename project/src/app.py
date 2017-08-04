@@ -14,6 +14,7 @@ MONGODB_PORT = 27017
 DBS_NAME = 'pricenium'
 COLLECTION_1 = 'posts'
 COLLECTION_2 = 'names'
+COLLECTION_3 = 'stamps'
 FIELDS = {'school_state': True, 'resource_type': True, 'poverty_level': True, 'date_posted': True, 'total_donations': True, '_id': False}
 
 @app.route("/")
@@ -37,6 +38,18 @@ def get_full():
 def get_keys():
     connection = MongoClient(MONGODB_HOST, MONGODB_PORT)
     collection = connection[DBS_NAME][COLLECTION_2]
+    items = collection.find()
+    json_items = []
+    for item in items:
+        json_items.append(item)
+    json_items = json.dumps(json_items, default=json_util.default)
+    connection.close()
+    return json_items
+
+@app.route("/pricenium/stamps")
+def get_time():
+    connection = MongoClient(MONGODB_HOST, MONGODB_PORT)
+    collection = connection[DBS_NAME][COLLECTION_3]
     items = collection.find()
     json_items = []
     for item in items:
