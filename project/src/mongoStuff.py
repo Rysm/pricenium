@@ -45,7 +45,6 @@ for piece in list(iterparse(sel1.read())):
     posts.insert( piece , check_keys=False)
 
 
-
 #read the item names
 sel2 = open("json/names.json", "r")
 
