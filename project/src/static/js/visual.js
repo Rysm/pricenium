@@ -90,8 +90,6 @@ window.onload = function(){
         //remove the bad key
         keyz.remove('_id')
 
-        //console.log(keyz);
-
         //Get the dates we've recorded on
         var times =[];
         for (b=0; b<itemKeys.length;b++){
@@ -102,12 +100,10 @@ window.onload = function(){
             }
         }
 
-        //remove the bad key
+        //remove the bad key that messes up the data from mongodb
         times.remove('_id')
 
-        //console.log(keys.length);
-
-        //console.log(times);
+        itemDict.remove('_id')
 
         //Retrieve the price based on date
         //mfw this might have been overkill
@@ -120,47 +116,91 @@ window.onload = function(){
 
         var ready = false;
 
-        for (c=0; c<times.length; c++){
+        //console.log(itemDict);
 
-            var priceData = [];
+        //Gathers and sorts all the data kek
+        for (c=0; c<itemDict.length; c++){
 
-            //returns the index od the day we have
-            var weekday = days[ getDayOfWeek(times[c])];
+            var currDay = times[c];
 
-            var myDate = times[c];
-            var innerArray = itemDict[c][myDate];
+            var indexLength = itemDict[c][currDay].length;
 
-            //Iterate through all the available keys we have and then
-            for (p = 0 ; p<keyz.length; p++){
-                for(var i in innerArray[p]){
-                    //console.log(i); // alerts key
-                    priceData.push( (c+1)*(parseFloat( innerArray[p][i]['price'].substring(1,6) )) ); //alerts key's value
-                }
+            for (f = 0 ; f<indexLength; f++){
+
+                //console.log(itemDict[c][currDay][f]);
+                var currItem = itemDict[c][currDay][f];
+
+                //get that stuff updated
+                currWeek.push( {
+                    "item" : currItem.item,
+                    "data":[{
+                        "price": currItem.data.price,
+                        "day" : days[c],
+                    }]
+                });
+
+
             }
 
-            currWeek.push( {
-                "day" : days[c],
-                "prices": priceData
-            });
 
+            /*
             if (c==times.length-1){
                 ready = true;
             }
+            */
 
         }
 
+
+        //console.log(priceData);
+        console.log(currWeek);
+        //console.log(keyz.length);
+
+
+        /*
+
+        This section of the code finds same-keys and concats all the prices over the period of seven day into one price array
+
+        */
+
+        var found = []; //just
+        var allDict = {};
+
+        for (d=0; d<currWeek.length; d++){
+
+            //Add everything we haven't seen yet into the found array
+            if ( !allDict.hasOwnProperty(currWeek[d].item) ){
+
+            //   console.log("Found a new a found item!");
+
+                //Initialize the item's array
+                allDict[currWeek[d].item] = [currWeek[d].data]
+                //allDict[currWeek[d].item] = [currWeek[d].item];
+            }
+            //we've seen this somewhere before...
+            else if ( allDict.hasOwnProperty(currWeek[d].item) ) {
+
+            //   console.log( currWeek[d].data);
+
+                //if ( currWeek[d].price != undefined){
+
+                    allDict[currWeek[d].item].push(currWeek[d].data);
+                //}
+            }
+        }
+
+
+
+        console.log(allDict);
+
+
+        /*
+
+        Graphing properties
+
+        */
+
         if (ready){
-
-            //console.log(priceData);
-            console.log(currWeek);
-
-            var data = [
-                {name: 'John', values: [0,1,3,9, 8, 7]},
-                {name: 'Harry', values: [0, 10, 7, 1, 1, 11]},
-                {name: 'Steve', values: [3, 1, 4, 4, 4, 17]},
-                {name: 'Adam', values: [4, 77, 2, 13, 11, 13]}
-            ];
-
 
             var margin = {top: 20, right: 80, bottom: 30, left: 50},
                 width = 640 - margin.left - margin.right,
@@ -172,8 +212,8 @@ window.onload = function(){
                 .range([0, width]);
 
             var y = d3.scaleLinear()
-                .domain([d3.min(currWeek, function(d) { return d3.min(d.prices); }),
-                         d3.max(currWeek, function(d) { return d3.max(d.prices); })])
+                .domain([d3.min(currWeek, function(d) { return d3.min(d); }),
+                         d3.max(currWeek, function(d) { return d3.max(d); })])
                 .range([height, 0]);
 
             var color = d3.scaleOrdinal(d3.schemeCategory10)
@@ -219,15 +259,16 @@ window.onload = function(){
              //Draw the lines
               items.append("path")
                   .attr("class", "line")
-                  .attr("d", function(d) {
-                    //console.log("d.prices bois" +  d.prices  );
-                    return line(d.prices);
+                  .attr("d", function(d,i) {
+                    console.log(  d  );
+                    return line(d.price);
                   })
-                  .style("stroke", function(d) { return color(d.day); })
+                  .style("stroke", function(d) { return color(d.price); })
                   .style("fill", "none");
 
             //Add the tooltips
             // add the dots with tooltips
+
             items.selectAll("dot")
             .data(currWeek)
             .enter().append("circle")
@@ -236,23 +277,25 @@ window.onload = function(){
                 //console.log( typeof(syad[d.day]) );
                 return x(syad[d.day]);
             })
-            .attr("cy", function(d) {
-                return y(d.prices[0]);
+            .attr("cy", function(d,i) {
+                return y(d.prices[i]);
             })
             .on("mouseover", function(d) {
                 div.transition()
                     .duration(200)
                     .style("opacity", .9);
-                div.html((d.day) + "<br/>" + d.prices)
+                div.html((d.day) + "<br/>" + d.price)
                     .style("left", (d3.event.pageX) + "px")
-                    .style("top", (d3.event.pageY - 28) + "px");
+                    .style("top", (d3.event.pageY-100) + "px");
             })
             .on("mouseout", function(d) {
                 div.transition()
                 .duration(500)
                 .style("opacity", 0);
             });
-        }
+
+
+    }
 
 }
 

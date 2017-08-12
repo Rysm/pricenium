@@ -124,6 +124,8 @@ def ebaySearch():
     #Navigate to the initial URL
     browser.get(url)
 
+    browser.implicitly_wait(10) # seconds
+
     searchBar = browser.find_element_by_name("_nkw")
 
     searchBar.send_keys( productName, Keys.RETURN)
@@ -163,7 +165,8 @@ def ebaySearch():
         finalPrice = price.text
 
         final.append({
-                nameName :{
+                'item': nameName,
+                'data':{
                     'price' : finalPrice.encode('utf-8'),
                     'timestamp' : datetime.utcnow().strftime('%H:%M:%S'),
                 }
@@ -172,8 +175,6 @@ def ebaySearch():
         result = {
             datetime.utcnow().strftime('%B %d %Y') : final
         }
-
-
 
     stamps.append(datetime.utcnow().strftime('%B %d %Y'))
 
@@ -202,6 +203,8 @@ def craigSearch():
 
     #Navigate to the initial URL
     browser.get(url)
+
+    browser.implicitly_wait(10) # seconds
 
     searchBar = browser.find_element_by_name("query")
 
@@ -236,7 +239,8 @@ def craigSearch():
         tracking.append(nameName)
 
         final.append({
-                nameName :{
+                'item' : nameName,
+                'data':{
                     'price' : finalPrice.encode('utf-8'),
                     'timestamp' : datetime.utcnow().strftime('%H:%M:%S'),
                 }
