@@ -134,34 +134,22 @@ window.onload = function(){
                 currWeek.push( {
                     "item" : currItem.item,
                     "data":[{
-                        "price": currItem.data.price,
+                        "price": Number((currItem.data.price).substring(1,6)),
                         "day" : days[c],
                     }]
                 });
 
-
             }
-
-
-            /*
-            if (c==times.length-1){
-                ready = true;
-            }
-            */
 
         }
-
-
-        //console.log(priceData);
-        console.log(currWeek);
-        //console.log(keyz.length);
-
 
         /*
 
         This section of the code finds same-keys and concats all the prices over the period of seven day into one price array
 
         */
+
+        //console.log(currWeek);
 
         var found = []; //just
         var allDict = {};
@@ -174,7 +162,7 @@ window.onload = function(){
             //   console.log("Found a new a found item!");
 
                 //Initialize the item's array
-                allDict[currWeek[d].item] = [currWeek[d].data]
+                allDict[currWeek[d].item] = [currWeek[d].data[0].price]
                 //allDict[currWeek[d].item] = [currWeek[d].item];
             }
             //we've seen this somewhere before...
@@ -184,15 +172,24 @@ window.onload = function(){
 
                 //if ( currWeek[d].price != undefined){
 
-                    allDict[currWeek[d].item].push(currWeek[d].data);
+                    allDict[currWeek[d].item].push(currWeek[d].data[0].price);
                 //}
             }
+
+            if (d==currWeek.length-1){
+                //console.log("READY");
+                ready = true;
+            }
+
         }
 
+        //console.log(allDict);
 
+        swagDict = [];
 
-        console.log(allDict);
+        swagDict.push(allDict);
 
+        //console.log(swagDict);
 
         /*
 
@@ -202,18 +199,55 @@ window.onload = function(){
 
         if (ready){
 
+            console.log("ready");
+
             var margin = {top: 20, right: 80, bottom: 30, left: 50},
                 width = 640 - margin.left - margin.right,
                 height = 380 - margin.top - margin.bottom;
-
 
             var x = d3.scaleLinear()
                 .domain([0, d3.max(currWeek, function(d) { return 6; })])
                 .range([0, width]);
 
             var y = d3.scaleLinear()
-                .domain([d3.min(currWeek, function(d) { return d3.min(d); }),
-                         d3.max(currWeek, function(d) { return d3.max(d); })])
+                .domain([d3.min(swagDict, function(d,i) {
+
+                    //console.log(d);
+
+                    var tempvalues = [];
+
+                    for (var key in d) {
+                        //console.log("Key: " + key);
+                        //console.log("Value: " + d[key]);
+
+                        tempvalues.push(d3.min(d[key]));
+
+                    }
+
+                    //console.log(d3.min(tempvalues));
+
+                    return d3.min(tempvalues);
+
+                }),
+                d3.max(swagDict, function(d,i) {
+
+                        var tempvalues = [];
+
+                        for (var key in d) {
+                            //console.log("Key: " + key);
+
+                            //console.log("Value: " + d[key]);
+
+                            tempvalues.push(d3.max(d[key]));
+
+                        }
+
+                        //console.log(tempvalues);
+
+                        //console.log( d3.max(tempvalues) );
+
+                        return d3.max(tempvalues);
+                })])
                 .range([height, 0]);
 
             var color = d3.scaleOrdinal(d3.schemeCategory10)
@@ -226,15 +260,9 @@ window.onload = function(){
             var yAxis = d3.axisLeft()
                 .scale(y)
 
-            var line = d3.line()
-                .curve(d3.curveBasis)
-                .x(function(d, i) { return x(i); })
-                .y(function(d, i) { return y(d); });
-
             //stuff for the damn tolltips
             var div = d3.select("#price-chart").append("div")
                 .attr("class", "tooltip")
-                .style("opacity", 0);
 
             var svg = d3.select("#price-chart").append("svg")
                 .attr("width", width + margin.left + margin.right)
@@ -251,48 +279,67 @@ window.onload = function(){
                   .attr("class", "y axis")
                   .call(yAxis);
 
-              var items = svg.selectAll(".items")
-                  .data(currWeek)
-                  .enter().append("g")
-                  .attr("class", "items");
+            //Predefine the function of the line component
+            var line = d3.line()
+                .x(function(d,i) {
+                    //console.log(i);
+                    return x(i);
+                })
+                .y(function(d) {
+                    console.log(d);
+                    return y(d);
+                });
 
-             //Draw the lines
-              items.append("path")
-                  .attr("class", "line")
-                  .attr("d", function(d,i) {
-                    console.log(  d  );
-                    return line(d.price);
-                  })
-                  .style("stroke", function(d) { return color(d.price); })
-                  .style("fill", "none");
+            //Iterate through swagDict and add the lines
+            for (var key in swagDict[0]) {
+
+                //Returns the array of prices
+                //console.log(key);
+                //console.log(swagDict[0][key]);
+
+                svg.selectAll(".line")
+                .append("path")
+                .attr("class", "line")
+                .attr("d", line(swagDict[0][key]) )
+                .attr("stroke-width", 5)
+                .attr("stroke", "red") ;
+
+
+            }
+
 
             //Add the tooltips
             // add the dots with tooltips
 
+
+            /*
             items.selectAll("dot")
-            .data(currWeek)
-            .enter().append("circle")
-            .attr("r", 3)
-            .attr("cx", function(d) {
-                //console.log( typeof(syad[d.day]) );
-                return x(syad[d.day]);
-            })
-            .attr("cy", function(d,i) {
-                return y(d.prices[i]);
-            })
-            .on("mouseover", function(d) {
-                div.transition()
-                    .duration(200)
-                    .style("opacity", .9);
-                div.html((d.day) + "<br/>" + d.price)
-                    .style("left", (d3.event.pageX) + "px")
-                    .style("top", (d3.event.pageY-100) + "px");
-            })
-            .on("mouseout", function(d) {
-                div.transition()
-                .duration(500)
-                .style("opacity", 0);
-            });
+                .data(allDict)
+                .enter().append("circle")
+                .attr("r", 3)
+                .attr("cx", function(d) {
+                    console.log( d);
+                    return x( d );
+                })
+                .attr("cy", function(d,i) {
+                    //console.log( typeof(d[i]) );
+                    //return y( d.data[0].price );
+                    return  ( d[Object.keys(d)[0]] );
+                })
+                .on("mouseover", function(d) {
+                    div.transition()
+                        .duration(200)
+                        .style("opacity", .9);
+                    div.html(( syad[d.data[0].day] ) + "<br/>" + (d.data[0].price) )
+                        .style("left", (d3.event.pageX) + "px")
+                        .style("top", (d3.event.pageY-100) + "px");
+                })
+                .on("mouseout", function(d) {
+                    div.transition()
+                    .duration(500)
+                    .style("opacity", 0);
+                });
+            */
 
 
     }
