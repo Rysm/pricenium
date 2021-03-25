@@ -47,7 +47,7 @@ python-slugify==1.2.1
 python-socketio==1.4.2
 python-telegram-bot==5.0.0
 pytz==2016.7
-PyYAML==3.11
+PyYAML==5.4
 raven==5.23.0
 requests==2.10.0
 requests-mock==1.0.0
