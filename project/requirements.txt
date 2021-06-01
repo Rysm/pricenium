@@ -58,7 +58,7 @@ six==1.9.0
 socketIO-client==0.7.0
 timeout-decorator==0.3.2
 Unidecode==0.4.19
-urllib3==1.18
+urllib3==1.26.5
 virtualenv==15.0.2
 websocket-client==0.37.0
 Werkzeug==0.11.10
